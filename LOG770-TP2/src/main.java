@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import Jama.Matrix;
 
 
+
 public class main {
 
 	/**
@@ -102,7 +103,7 @@ public class main {
 	{
 		double erreur = 0;
 		final int size = dataSet.size();
-		final int degreMax = poids.length;
+		final int degreMax = poids.getRowDimension();
 		
 		double sum = 0;
 		//index du x dans le dataset
