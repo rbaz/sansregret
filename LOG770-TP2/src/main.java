@@ -15,25 +15,18 @@ public class main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		ArrayList<Point2D.Double> dataset = getexemples(readData("dataset.txt"));
+		ArrayList<Point2D.Double> dataset = getDataset(readData("dataset.txt"));
+		ArrayList<Point2D.Double> exemples = getExemples(dataset,0,50);
 		
-		Matrix m = createMatriceVandermonde(dataset,10,3);
+		Matrix m = createMatriceVandermonde(exemples,3);
+		Matrix y = createY(exemples);
+		Matrix poids = calculerPoids(m,y);
+		poids.print(5, 5);
 		
-		m.print(5,5);
 		
-		//System.out.println(exemples.toString());
-		
+		double erreur = getErreur(poids, dataset);
+		System.out.println("Erreur: " + erreur);
 
-
-	}
-	
-	public static  void partie1(ArrayList<Point2D.Double> exemples){
-		for(int nbExemples=10; nbExemples <= 80; nbExemples=nbExemples+5){
-			
-			Matrix m = new Matrix(4,nbExemples);
-			
-		
-		}
 	}
 	
 
@@ -43,20 +36,44 @@ public class main {
 	 * @param nbExemples
 	 * @param p : Complexité
 	 */
-	public static Matrix createMatriceVandermonde(ArrayList<Point2D.Double> dataset, int nbExemples, int p){
-		Matrix m = new Matrix(nbExemples,p+1);
+	public static Matrix createMatriceVandermonde(ArrayList<Point2D.Double> exemples, int p){
+		Matrix m = new Matrix(exemples.size(),p+1);
 		
-		for(int i=0; i<nbExemples; i++){
+		for(int i=0; i<exemples.size(); i++){
 			m.set(i, 0, 1);
 			for(int j=1; j<=p; j++){
-				double x = dataset.get(i).x;
+				double x = exemples.get(i).x;
 				m.set(i, j, Math.pow(x,j));
 			}
 		}
 		return m;
 	}
+	public static Matrix createY(ArrayList<Point2D.Double> exemples){
+		Matrix m = new Matrix(exemples.size(), 1);
+		for(int i=0; i<exemples.size();i++){
+			m.set(i, 0, exemples.get(i).y);
+		}
+		return m;
+	}
+	
+	public static Matrix calculerPoids(Matrix m, Matrix y){
+		Matrix mT = m.transpose();
+		Matrix w = mT.times(m).inverse().times(mT).times(y);
+		
+		return w;
+		
+	}
+	
+	public static ArrayList<Point2D.Double> getExemples(ArrayList<Point2D.Double> dataset, int startIndex, int nbExemples){
+		ArrayList<Point2D.Double> exemples=new ArrayList<Point2D.Double>();
+		for(int i=0; i< nbExemples; i++){
+			exemples.add(new Point2D.Double(dataset.get(startIndex+i).x,
+					dataset.get(startIndex+i).y));
+		}
+		return exemples;
+	}
 
-	public static ArrayList<Point2D.Double> getexemples(String data){
+	public static ArrayList<Point2D.Double> getDataset(String data){
 		ArrayList<Point2D.Double> exemplesDouble= new ArrayList<Point2D.Double>();
 		String[] exemplesString = data.split(" ");
 		for(int i=0; (i+1) < exemplesString.length; i=i+2){
