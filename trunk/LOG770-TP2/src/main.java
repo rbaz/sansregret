@@ -14,7 +14,14 @@ public class main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		ArrayList<Point2D.Double> exemples = getexemples(readData("dataset.txt"));
+		ArrayList<Point2D.Double> dataset = getexemples(readData("dataset.txt"));
+		
+		Matrix m = createMatriceVandermonde(dataset,10,3);
+		
+		m.print(5,5);
+		
+		//System.out.println(exemples.toString());
+		
 
 
 	}
@@ -22,10 +29,32 @@ public class main {
 	public static  void partie1(ArrayList<Point2D.Double> exemples){
 		for(int nbExemples=10; nbExemples <= 80; nbExemples=nbExemples+5){
 			
-			Matrix m = new Matrix(4,80);
+			Matrix m = new Matrix(4,nbExemples);
+			
+		
 		}
 	}
 	
+
+	/**
+	 * Créer la matrice de Vandermonde
+	 * @param dataset
+	 * @param nbExemples
+	 * @param p : Complexité
+	 */
+	public static Matrix createMatriceVandermonde(ArrayList<Point2D.Double> dataset, int nbExemples, int p){
+		Matrix m = new Matrix(nbExemples,p+1);
+		
+		for(int i=0; i<nbExemples; i++){
+			m.set(i, 0, 1);
+			for(int j=1; j<=p; j++){
+				double x = dataset.get(i).x;
+				m.set(i, j, Math.pow(x,j));
+			}
+		}
+		return m;
+	}
+
 	public static ArrayList<Point2D.Double> getexemples(String data){
 		ArrayList<Point2D.Double> exemplesDouble= new ArrayList<Point2D.Double>();
 		String[] exemplesString = data.split(" ");
