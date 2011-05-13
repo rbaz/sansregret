@@ -98,21 +98,27 @@ public class main {
 	 * @return 	L'erreur empirique si on fournit les données d'entraînement;
 	 * 			L'erreur de généralisation si on fournit les données de test.
 	 */
-	public static double getErreur(double[] poids, ArrayList<Point2D.Double> dataSet)
+	public static double getErreur(Matrix poids, ArrayList<Point2D.Double> dataSet)
 	{
 		double erreur = 0;
 		final int size = dataSet.size();
 		final int degreMax = poids.length;
 		
+		double sum = 0;
 		//index du x dans le dataset
 		for(int i=0;i<size;i++){
 			
+			double x = dataSet.get(i).getX();
+			double y = dataSet.get(i).getY();
+			double val = 0;
 			//degré du polynome
 			for(int j=0;j<degreMax;j++){
-				
+				val += poids.get(j,0) * Math.pow(x,j);
 			}
+			sum += Math.pow((val - y),2);
 		}
 		
+		erreur = Math.sqrt(sum/size);
 		
 		return erreur;
 	}
