@@ -16,16 +16,19 @@ public class main {
 	 */
 	public static void main(String[] args) {
 		ArrayList<Point2D.Double> dataset = getDataset(readData("dataset.txt"));
-		ArrayList<Point2D.Double> exemples = getExemples(dataset,0,50);
 		
-		Matrix m = createMatriceVandermonde(exemples,3);
-		Matrix y = createY(exemples);
-		Matrix poids = calculerPoids(m,y);
-		poids.print(5, 5);
+		for(int i=10; i<=80;i=i+5){
+			ArrayList<Point2D.Double> exemples = getExemples(dataset,0,i);
+			Matrix m = createMatriceVandermonde(exemples,3);
+			Matrix y = createY(exemples);
+			Matrix poids = calculerPoids(m,y);
+			double erreur = getErreur(poids, dataset);
+			System.out.println("Erreur: " + i + " : "+ erreur);
+			
+		}
 		
 		
-		double erreur = getErreur(poids, dataset);
-		System.out.println("Erreur: " + erreur);
+		
 
 	}
 	
