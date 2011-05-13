@@ -1,4 +1,3 @@
-import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -16,9 +15,7 @@ public class main {
 	 */
 	public static void main(String[] args) {
 		ArrayList<Point2D.Double> exemples = getexemples(readData("dataset.txt"));
-		
-		System.out.println(exemples.toString());
-		
+
 
 	}
 	
@@ -28,6 +25,7 @@ public class main {
 			Matrix m = new Matrix(4,80);
 		}
 	}
+	
 	public static ArrayList<Point2D.Double> getexemples(String data){
 		ArrayList<Point2D.Double> exemplesDouble= new ArrayList<Point2D.Double>();
 		String[] exemplesString = data.split(" ");
@@ -63,4 +61,30 @@ public class main {
 		return fileData.toString();
 	}
 
+	
+	/***
+	 *  Calculer l'erreur empirique ou l'erreur de généralisation
+	 * @param poids : Un vecteur de poids calculés selon w=(X' * X)^-1 * X' * y
+	 * @param dataSet: Les données d'entraînement ou les données de test
+	 * @return 	L'erreur empirique si on fournit les données d'entraînement;
+	 * 			L'erreur de généralisation si on fournit les données de test.
+	 */
+	public static double getErreur(double[] poids, ArrayList<Point2D.Double> dataSet)
+	{
+		double erreur = 0;
+		final int size = dataSet.size();
+		final int degreMax = poids.length;
+		
+		//index du x dans le dataset
+		for(int i=0;i<size;i++){
+			
+			//degré du polynome
+			for(int j=0;j<degreMax;j++){
+				
+			}
+		}
+		
+		
+		return erreur;
+	}
 }
