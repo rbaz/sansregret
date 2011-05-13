@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import Jama.Matrix;
+
 
 public class main {
 
@@ -15,18 +17,21 @@ public class main {
 	public static void main(String[] args) {
 		ArrayList<Point2D.Double> exemples = getexemples(readData("dataset.txt"));
 		
+		System.out.println(exemples.toString());
 		
 
 	}
 	
 	public static  void partie1(ArrayList<Point2D.Double> exemples){
 		for(int nbExemples=10; nbExemples <= 80; nbExemples=nbExemples+5){
+			
+			Matrix m = new Matrix(4,80);
 		}
 	}
 	public static ArrayList<Point2D.Double> getexemples(String data){
 		ArrayList<Point2D.Double> exemplesDouble= new ArrayList<Point2D.Double>();
 		String[] exemplesString = data.split(" ");
-		for(int i=0; i < exemplesString.length; i=i+1){
+		for(int i=0; (i+1) < exemplesString.length; i=i+2){
 			Point2D.Double p = new Point2D.Double(Double.valueOf(exemplesString[i]), 
 					Double.valueOf(exemplesString[i+1]));
 			exemplesDouble.add(p);
