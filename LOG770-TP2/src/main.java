@@ -17,16 +17,38 @@ public class main {
 	public static void main(String[] args) {
 		ArrayList<Point2D.Double> dataset = getDataset(readData("dataset.txt"));
 		
-		for(int i=10; i<=80;i=i+5){
-			ArrayList<Point2D.Double> exemples = getExemples(dataset,0,i);
-			Matrix m = createMatriceVandermonde(exemples,3);
-			Matrix y = createY(exemples);
-			Matrix poids = calculerPoids(m,y);
-			double erreur = getErreur(poids, dataset);
-			System.out.println("Erreur: (" + i + " exemples d'entraînement) : "+ erreur);
-			
-		}
+		testerNombreDataTest(dataset);
 		
+		testerOrdreRegression(dataset);
+	}
+	
+	
+	/***
+	 *  3. Influence du nombre de données d'entraînement
+	 * @param dataset
+	 */
+	public static void testerNombreDataTest(ArrayList<Point2D.Double> dataset){
+		
+		ArrayList<Point2D.Double> dataTest = getExemples(dataset,80,20);
+		
+		for(int i=10; i<=80;i=i+5){
+			ArrayList<Point2D.Double> dataTrain = getExemples(dataset,0,i);
+			Matrix m = createMatriceVandermonde(dataTrain,3);
+			Matrix y = createY(dataTrain);
+			Matrix poids = calculerPoids(m,y);
+			double erreurE = getErreur(poids, dataTrain);
+			
+			System.out.println("Erreur Empirique: (" + i + " exemples d'entraînement) : "+ erreurE);
+			double erreurG = getErreur(poids, dataTest);
+			System.out.println("Erreur  de Généralisation: (" + i + " exemples d'entraînement) : "+ erreurG);
+		}
+	}
+	
+	/***
+	 * 4. Influence de l'ordre de régression
+	 * @param dataset
+	 */
+	public static void testerOrdreRegression(ArrayList<Point2D.Double> dataset){
 		final int nbrExemplesTrain = 60;
 		double minErreur = 100;
 		int bestDegre = 0;
@@ -44,8 +66,6 @@ public class main {
 			System.out.println("Erreur: (Polynome de degré " + p + ") : "+ erreur);
 		}
 		System.out.println("Le meilleur degre: "+ bestDegre);
-		
-
 	}
 	
 
