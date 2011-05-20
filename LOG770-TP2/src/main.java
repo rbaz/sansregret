@@ -1,9 +1,18 @@
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.xy.XYDataItem;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 import Jama.Matrix;
 
@@ -17,17 +26,58 @@ public class main {
 	public static void main(String[] args) {
 		ArrayList<Point2D.Double> dataset = getDataset(readData("dataset.txt"));
 		
-		testerNombreDataTest(dataset);
+		ArrayList<Point2D.Double>[] erreursNombre = testerNombreDataTest(dataset);
+		generateChart("chart1", "Erreurs en fonction du nombre de données d'entraînement", erreursNombre[0], erreursNombre[1]);
 		
 		testerOrdreRegression(dataset);
+	
+		
+		 
+	        
 	}
 	
-	
+	public static void generateChart(String fileName, String chartTitle, 
+			ArrayList<Point2D.Double> erreurEmpiriqueData, ArrayList<Point2D.Double> erreurGeneralisationData){
+		
+		final XYSeries empiriqueSeries = new XYSeries("Erreur empirique");
+		for(int i=0; i<erreurEmpiriqueData.size(); i++){
+			empiriqueSeries.add(
+					new XYDataItem(erreurEmpiriqueData.get(i).getX(),erreurEmpiriqueData.get(i).getY()));
+		}
+		
+		final XYSeries generalisationSeries = new XYSeries("Erreur généralisation");
+		for(int i=0; i<erreurEmpiriqueData.size(); i++){
+			empiriqueSeries.add(erreurGeneralisationData.get(i).getX(),erreurGeneralisationData.get(i).getY());
+		}
+        
+		final XYSeriesCollection data = new XYSeriesCollection();
+		data.addSeries(generalisationSeries);
+		data.addSeries(empiriqueSeries);
+		
+		
+        final JFreeChart chart = ChartFactory.createXYLineChart(
+            chartTitle,
+            "X", 
+            "Y", 
+            data,
+            PlotOrientation.VERTICAL,
+            true,
+            true,
+            false
+        );
+        
+        try {
+			ChartUtilities.saveChartAsJPEG(new File("C:charts/"+fileName+".jpg"), chart, 500, 300);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	/***
 	 *  3. Influence du nombre de données d'entraînement
 	 * @param dataset: Les 100 données lues du fichier
 	 */
-	public static void testerNombreDataTest(ArrayList<Point2D.Double> dataset){
+	public static ArrayList[] testerNombreDataTest(ArrayList<Point2D.Double> dataset){
 
 		System.out.println(" -------------------------------------------------------");
 		System.out.println(" PARTIE 3. Influence du nombre de données d'entraînement");
@@ -35,17 +85,28 @@ public class main {
 		
 		ArrayList<Point2D.Double> dataTest = getExemples(dataset,80,20);
 		
+		ArrayList[] erreurs = {
+				new ArrayList<Point2D.Double>(),
+				new ArrayList<Point2D.Double>()
+		};
+		
 		for(int i=10; i<=80;i=i+5){
 			ArrayList<Point2D.Double> dataTrain = getExemples(dataset,0,i);
 			Matrix m = createMatriceVandermonde(dataTrain,3);
 			Matrix y = createY(dataTrain);
 			Matrix poids = calculerPoids(m,y);
-			double erreurE = getErreur(poids, dataTrain);
 			
+			double erreurE = getErreur(poids, dataTrain);			
 			System.out.println("Erreur Empirique: (" + i + " exemples d'entraînement) : "+ erreurE);
+			
 			double erreurG = getErreur(poids, dataTest);
 			System.out.println("Erreur  de Généralisation: (" + i + " exemples d'entraînement) : "+ erreurG);
+			
+			erreurs[0].add(new Point2D.Double(i,erreurE));
+			erreurs[1].add(new Point2D.Double(i,erreurG));
+	
 		}
+		return erreurs;
 	}
 	
 	/***
