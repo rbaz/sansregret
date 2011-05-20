@@ -23,10 +23,19 @@ public class main {
 			Matrix y = createY(exemples);
 			Matrix poids = calculerPoids(m,y);
 			double erreur = getErreur(poids, dataset);
-			System.out.println("Erreur: " + i + " : "+ erreur);
+			System.out.println("Erreur: (" + i + " exemples d'entraînement) : "+ erreur);
 			
 		}
 		
+		final int nbrExemples = 80;
+		for(int p=1;p<=20;p++){
+			ArrayList<Point2D.Double> exemples = getExemples(dataset,0,nbrExemples);
+			Matrix m = createMatriceVandermonde(exemples,p);
+			Matrix y = createY(exemples);
+			Matrix poids = calculerPoids(m,y);
+			double erreur = getErreur(poids, dataset);
+			System.out.println("Erreur: (Polynome degré" + p + ") : "+ erreur);
+		}
 		
 		
 
