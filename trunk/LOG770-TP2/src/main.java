@@ -27,16 +27,23 @@ public class main {
 			
 		}
 		
-		final int nbrExemples = 80;
-		for(int p=1;p<=20;p++){
-			ArrayList<Point2D.Double> exemples = getExemples(dataset,0,nbrExemples);
+		final int nbrExemplesTrain = 60;
+		double minErreur = 100;
+		int bestDegre = 0;
+		for(int p=1;p<15;p++){
+			ArrayList<Point2D.Double> exemples = getExemples(dataset,0,nbrExemplesTrain);
 			Matrix m = createMatriceVandermonde(exemples,p);
 			Matrix y = createY(exemples);
 			Matrix poids = calculerPoids(m,y);
 			double erreur = getErreur(poids, dataset);
+			if(erreur<minErreur)
+			{
+				minErreur = erreur;
+				bestDegre = p;
+			}
 			System.out.println("Erreur: (Polynome de degré " + p + ") : "+ erreur);
 		}
-		
+		System.out.println("Le meilleur degre: "+ bestDegre);
 		
 
 	}
