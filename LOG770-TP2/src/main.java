@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,6 +11,9 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -27,16 +31,24 @@ public class main {
 		ArrayList<Point2D.Double> dataset = getDataset(readData("dataset.txt"));
 		
 		ArrayList<Point2D.Double>[] erreursNombre = testerNombreDataTest(dataset);
-		generateChart("chart1", "Erreurs en fonction du nombre de données d'entraînement", erreursNombre[0], erreursNombre[1]);
+		generateChart("chart1", 
+					"Erreurs en fonction du nombre de données d'entraînement", 
+					"Nombre de données d'entraînement",
+					erreursNombre[0], 
+					erreursNombre[1]);
 		
-		testerOrdreRegression(dataset);
-	
+		ArrayList<Point2D.Double>[] erreursRegression = testerOrdreRegression(dataset);
+		generateChart("chart2", 
+					"Erreurs en fonction de l'ordre de régression", 
+					"Ordre du polynôme de régression",
+					erreursRegression[0], 
+					erreursRegression[1]);
 		
 		 
 	        
 	}
 	
-	public static void generateChart(String fileName, String chartTitle, 
+	public static void generateChart(String fileName, String chartTitle, String Xaxis, 
 			ArrayList<Point2D.Double> erreurEmpiriqueData, ArrayList<Point2D.Double> erreurGeneralisationData){
 		
 		final XYSeries empiriqueSeries = new XYSeries("Erreur empirique");
@@ -47,24 +59,24 @@ public class main {
 		
 		final XYSeries generalisationSeries = new XYSeries("Erreur généralisation");
 		for(int i=0; i<erreurEmpiriqueData.size(); i++){
-			empiriqueSeries.add(erreurGeneralisationData.get(i).getX(),erreurGeneralisationData.get(i).getY());
+			generalisationSeries.add(erreurGeneralisationData.get(i).getX(),erreurGeneralisationData.get(i).getY());
 		}
         
 		final XYSeriesCollection data = new XYSeriesCollection();
 		data.addSeries(generalisationSeries);
 		data.addSeries(empiriqueSeries);
 		
-		
         final JFreeChart chart = ChartFactory.createXYLineChart(
             chartTitle,
-            "X", 
-            "Y", 
+            Xaxis, 
+            "Erreur", 
             data,
             PlotOrientation.VERTICAL,
             true,
             true,
             false
         );
+
         
         try {
 			ChartUtilities.saveChartAsJPEG(new File("C:charts/"+fileName+".jpg"), chart, 500, 300);
@@ -113,7 +125,7 @@ public class main {
 	 * 4. Influence de l'ordre de régression
 	 * @param dataset: Les 100 données lues du fichier
 	 */
-	public static void testerOrdreRegression(ArrayList<Point2D.Double> dataset){
+	public static ArrayList[] testerOrdreRegression(ArrayList<Point2D.Double> dataset){
 
 		System.out.println(" --------------------------------------------");
 		System.out.println(" PARTIE 4. Influence de l'ordre de régression");
@@ -123,9 +135,14 @@ public class main {
 		ArrayList<Point2D.Double> dataValid = getExemples(dataset,60,20);
 		ArrayList<Point2D.Double> dataTest = getExemples(dataset,80,20);
 		
+		ArrayList[] erreurs = {
+				new ArrayList<Point2D.Double>(),
+				new ArrayList<Point2D.Double>()
+		};
+		
 		double minErreur = 100;
 		int bestDegre = 0;
-		for(int p=1;p<=15;p++){
+		for(int p=0;p<=15;p++){
 			
 			Matrix m = createMatriceVandermonde(dataTrain,p);
 			Matrix y = createY(dataTrain);
@@ -140,7 +157,11 @@ public class main {
 				minErreur = erreurG;
 				bestDegre = p;
 			}
+			
+			erreurs[0].add(new Point2D.Double(p,erreurE));
+			erreurs[1].add(new Point2D.Double(p,erreurG));
 		}
+		
 		System.out.println("Le meilleur degre: "+ bestDegre);
 		System.out.println(" Avec une erreur de généralisation de: "+ minErreur + "  (sur dataValid)");
 		
@@ -153,6 +174,9 @@ public class main {
 
 		double erreurG = getErreur(poids, dataTest);
 		System.out.println(" Avec une erreur de généralisation de: "+ erreurG + "  (sur dataTest)");
+		
+
+		return erreurs;
 	}
 	
 
