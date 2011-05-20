@@ -34,7 +34,7 @@ public class main {
 			Matrix y = createY(exemples);
 			Matrix poids = calculerPoids(m,y);
 			double erreur = getErreur(poids, dataset);
-			System.out.println("Erreur: (Polynome degré" + p + ") : "+ erreur);
+			System.out.println("Erreur: (Polynome de degré " + p + ") : "+ erreur);
 		}
 		
 		
