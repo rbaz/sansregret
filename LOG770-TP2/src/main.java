@@ -15,6 +15,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.data.xy.XYDataItem;
+import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -51,6 +52,7 @@ public class main {
 	public static void generateChart(String fileName, String chartTitle, String Xaxis, 
 			ArrayList<Point2D.Double> erreurEmpiriqueData, ArrayList<Point2D.Double> erreurGeneralisationData){
 		
+		
 		final XYSeries empiriqueSeries = new XYSeries("Erreur empirique");
 		for(int i=0; i<erreurEmpiriqueData.size(); i++){
 			empiriqueSeries.add(
@@ -77,6 +79,8 @@ public class main {
             false
         );
 
+        
+        
         
         try {
 			ChartUtilities.saveChartAsJPEG(new File("C:charts/"+fileName+".jpg"), chart, 500, 300);
