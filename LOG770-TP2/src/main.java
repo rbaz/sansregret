@@ -25,9 +25,13 @@ public class main {
 	
 	/***
 	 *  3. Influence du nombre de données d'entraînement
-	 * @param dataset
+	 * @param dataset: Les 100 données lues du fichier
 	 */
 	public static void testerNombreDataTest(ArrayList<Point2D.Double> dataset){
+
+		System.out.println(" -------------------------------------------------------");
+		System.out.println(" PARTIE 3. Influence du nombre de données d'entraînement");
+		System.out.println(" -------------------------------------------------------");
 		
 		ArrayList<Point2D.Double> dataTest = getExemples(dataset,80,20);
 		
@@ -46,26 +50,48 @@ public class main {
 	
 	/***
 	 * 4. Influence de l'ordre de régression
-	 * @param dataset
+	 * @param dataset: Les 100 données lues du fichier
 	 */
 	public static void testerOrdreRegression(ArrayList<Point2D.Double> dataset){
-		final int nbrExemplesTrain = 60;
+
+		System.out.println(" --------------------------------------------");
+		System.out.println(" PARTIE 4. Influence de l'ordre de régression");
+		System.out.println(" --------------------------------------------");
+		
+		ArrayList<Point2D.Double> dataTrain = getExemples(dataset,0,60);
+		ArrayList<Point2D.Double> dataValid = getExemples(dataset,60,20);
+		ArrayList<Point2D.Double> dataTest = getExemples(dataset,80,20);
+		
 		double minErreur = 100;
 		int bestDegre = 0;
-		for(int p=1;p<15;p++){
-			ArrayList<Point2D.Double> exemples = getExemples(dataset,0,nbrExemplesTrain);
-			Matrix m = createMatriceVandermonde(exemples,p);
-			Matrix y = createY(exemples);
+		for(int p=1;p<=15;p++){
+			
+			Matrix m = createMatriceVandermonde(dataTrain,p);
+			Matrix y = createY(dataTrain);
 			Matrix poids = calculerPoids(m,y);
-			double erreur = getErreur(poids, dataset);
-			if(erreur<minErreur)
+			double erreurE = getErreur(poids, dataTrain);
+			System.out.println("Erreur Empirique: (Polynome de degré " + p + ") : "+ erreurE);
+			
+			double erreurG = getErreur(poids, dataValid);
+			System.out.println("Erreur  de Généralisation: (Polynome de degré " + p + ") : "+ erreurG);
+			if(erreurG<minErreur)
 			{
-				minErreur = erreur;
+				minErreur = erreurG;
 				bestDegre = p;
 			}
-			System.out.println("Erreur: (Polynome de degré " + p + ") : "+ erreur);
 		}
 		System.out.println("Le meilleur degre: "+ bestDegre);
+		System.out.println(" Avec une erreur de généralisation de: "+ minErreur + "  (sur dataValid)");
+		
+		// Ici on refait la regression sur Train avec bestDegre
+		// On évalue erreur de généralisation sur Test
+		// On compare ErreurG sur Test avec erreurG sur Valid
+		Matrix m = createMatriceVandermonde(dataTrain,bestDegre);
+		Matrix y = createY(dataTrain);
+		Matrix poids = calculerPoids(m,y);
+
+		double erreurG = getErreur(poids, dataTest);
+		System.out.println(" Avec une erreur de généralisation de: "+ erreurG + "  (sur dataTest)");
 	}
 	
 
