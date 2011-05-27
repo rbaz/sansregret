@@ -71,14 +71,14 @@ public class main {
         final JFreeChart chart = ChartFactory.createXYLineChart(
             chartTitle,
             Xaxis, 
-            "Erreur", 
+            "Erreur (RMS)", 
             data,
             PlotOrientation.VERTICAL,
             true,
             true,
             false
         );
-
+        
         
         
         
@@ -145,34 +145,34 @@ public class main {
 		};
 		
 		double minErreur = 100;
-		int bestDegre = 0;
-		for(int p=0;p<=15;p++){
+		int bestOrdre = 0;
+		for(int degre=1;degre<=19;degre++){
 			
-			Matrix m = createMatriceVandermonde(dataTrain,p);
+			Matrix m = createMatriceVandermonde(dataTrain,degre);
 			Matrix y = createY(dataTrain);
 			Matrix poids = calculerPoids(m,y);
 			double erreurE = getErreur(poids, dataTrain);
-			System.out.println("Erreur Empirique: (Polynome de degré " + p + ") : "+ erreurE);
+			System.out.println("Erreur Empirique: (Polynome de degré " + degre + ") : "+ erreurE);
 			
 			double erreurG = getErreur(poids, dataValid);
-			System.out.println("Erreur  de Généralisation: (Polynome de degré " + p + ") : "+ erreurG);
+			System.out.println("Erreur  de Généralisation: (Polynome de degré " + degre + ") : "+ erreurG);
 			if(erreurG<minErreur)
 			{
 				minErreur = erreurG;
-				bestDegre = p;
+				bestOrdre = degre+1;
 			}
 			
-			erreurs[0].add(new Point2D.Double(p,erreurE));
-			erreurs[1].add(new Point2D.Double(p,erreurG));
+			erreurs[0].add(new Point2D.Double(degre+1,erreurE));
+			erreurs[1].add(new Point2D.Double(degre+1,erreurG));
 		}
 		
-		System.out.println("Le meilleur degre: "+ bestDegre);
+		System.out.println("Le meilleur degre: "+ bestOrdre);
 		System.out.println(" Avec une erreur de généralisation de: "+ minErreur + "  (sur dataValid)");
 		
 		// Ici on refait la regression sur Train avec bestDegre
 		// On évalue erreur de généralisation sur Test
 		// On compare ErreurG sur Test avec erreurG sur Valid
-		Matrix m = createMatriceVandermonde(dataTrain,bestDegre);
+		Matrix m = createMatriceVandermonde(dataTrain,bestOrdre);
 		Matrix y = createY(dataTrain);
 		Matrix poids = calculerPoids(m,y);
 
