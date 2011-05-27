@@ -43,7 +43,8 @@ public class main {
 
 
 	/**
-	 * @param args
+	 * main()
+	 * @param args: none
 	 */
 	public static void main(String[] args) {
 		//Récupérer les points à utiliser
@@ -247,6 +248,7 @@ public class main {
 		return m;
 	}
 	
+	
 	/**
 	 * Retourne une matrice contenant les coordonnées Y des points en param.
 	 * @param exemples: Les points utilisés
@@ -259,6 +261,7 @@ public class main {
 		}
 		return m;
 	}
+	
 	
 	/***
 	 * Permet de calculer les poids selon (Mt*M)^-1 * Mt * y
@@ -273,6 +276,7 @@ public class main {
 		return w;
 		
 	}
+	
 	
 	/***
 	 * Retourne un échantillon de points contenus dans le dataset de 100 points
@@ -290,6 +294,7 @@ public class main {
 		return exemples;
 	}
 
+	
 	/***
 	 * Retourne le String lu dans le fichier sous forme d'un dataset
 	 * @param data : Le String lu dans le fichier
@@ -305,6 +310,7 @@ public class main {
 		}
 		return exemplesDouble;
 	}
+
 	
 	/***
 	 * Lire le fichier contenant les points
@@ -367,8 +373,6 @@ public class main {
 		
 		return erreur;
 	}
-	
-
 	
 	
 	/***
